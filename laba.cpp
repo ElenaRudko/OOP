@@ -1,9 +1,6 @@
 ﻿#include <stdlib.h>
 #include <iostream>
-
 using namespace std;
-
-
 template<typename T>//шаблон
 class Node                             //Структура, являющаяся звеном списка
 {
@@ -11,8 +8,6 @@ public:
 	T x;                             //Значение x будет передаваться в список
 	Node* Next, *Prev;                 //Указатели на адреса следующего и предыдущего элементов списка
 };
-
-
 class MyExeption : public exception
 {
 public:
@@ -28,7 +23,6 @@ public:
 private:
 	int dataState = 0;
 };
-
 template<typename T>
 class List                              //Создаем тип данных Список
 {
@@ -43,8 +37,6 @@ public:
 	void del();
 	void find();//Прототип функции поиска элементов в список
 };
-
-
 template<typename T>
 List<T>::~List()                           //Деструктор
 {
@@ -55,7 +47,6 @@ List<T>::~List()                           //Деструктор
 		Head = Tail;                   //Смена адреса начала на адрес следующего элемента
 	}
 }
-
 template<typename T>
 void List<T>::Add(int x)
 {
@@ -76,7 +67,6 @@ void List<T>::Add(int x)
 		Head = Tail = temp;              //Голова=Хвост=тот элемент, что сейчас добавили
 	}
 }
-
 template<typename T>
 void List<T>::sort()
 {
@@ -86,7 +76,6 @@ void List<T>::sort()
 	if (this->Head == NULL) {
 		throw MyExeption("Массив пустой", 0);//обработка исключений
 	}
-
 	for (Node<T>* i = Head; i; i = i->Next) {
 		for (Node<T>* j = Head; j; j = j->Next) {
 			//В зависимости от указанного направления
@@ -107,7 +96,6 @@ void List<T>::sort()
 				}
 				else cout << "Неверный ввод\n";
 			}
-
 		}
 	}
 	this->Show();
@@ -139,8 +127,6 @@ void List<T>::del()
 		delete Head;
 		this->count = 0;
 		return;
-
-
 		if (n == this->count) {
 			Node<T>* temp = Tail;
 			Tail = Tail->Prev;
@@ -149,8 +135,6 @@ void List<T>::del()
 			this->count--;
 			return;
 		}
-
-
 		Node<T>* temp = Head, *temp2;
 		for (int i = 0; i < n - 1; i++)
 		{
@@ -160,11 +144,9 @@ void List<T>::del()
 		temp2->Prev->Next = temp->Next;
 		temp2->Next->Prev = temp->Prev;
 		delete temp;
-
 		this->count--;
 	}
 }
-
 template<typename T>
 void List<T>::Show()
 {
@@ -179,7 +161,6 @@ void List<T>::Show()
 	}
 	cout << "\n";
 }
-
 template<typename T>
 void List<T>::find()
 {
@@ -200,14 +181,10 @@ void List<T>::find()
 	}
 	catch (exception ex)
 	{
-
 		cout << "Номер элемента ne naiden " << endl;
 		//count << ex.what() << endl;
-
-
 	}
 }
-
 int menu() {
 	cout << "Меню:\n";
 	cout << "1. Добавить\n";
@@ -220,7 +197,6 @@ int menu() {
 	cin >> ch;
 	return ch;
 }
-
 int main()
 {
 	setlocale(LC_ALL, "Russian");
