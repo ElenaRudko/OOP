@@ -3,12 +3,15 @@
 #include<fstream>
 #include<iomanip>
 #include<string.h>
+#include <clocale>
+#include <Windows.h>
 #pragma warning(disable : 4996)
 
 using namespace std;
-
 template <typename T1, typename T2, typename T3>
+
 struct Element {
+
 	char firstName[40];
 	char klas[40];
 	char counture[40];
@@ -25,6 +28,9 @@ private:
 public:
 	TextFile();
 	void setData();
+	void sortData(int chose);
+	//bool parametr(Element<T1, T2, T3> left, Element<T1, T2, T3> right, int chose);
+	bool parametr(Element<string, int, string> left, Element<string, int, string> right, int chose);
 	void sortData();
 	void showData();
 };
@@ -39,12 +45,14 @@ TextFile<T1, T2, T3>::TextFile() {
 
 template <typename T1, typename T2, typename T3>
 void TextFile<T1, T2, T3>::setData() {
+
 	int choice = 1;
 	fstream file;
 	file.open(this->fileName, ios::binary | ios::out);
 	this->count = 0;
 	do
 	{
+
 		cin.clear();
 		cin.ignore(10000, '\n');
 		cout << "\nИмя: ";
@@ -60,7 +68,7 @@ void TextFile<T1, T2, T3>::setData() {
 		cin >> object.c;
 		file.write(reinterpret_cast<char*>(&object), sizeof(Element<T1, T2, T3>));
 
-		cout << "\nAdd another subscriber? 1 - Yes, 0 - No: ";
+		cout << "\nПродолжить? 1 - Да, 0 - Нет: ";
 		cin >> choice;
 		cout << endl;
 		++this->count;
@@ -69,9 +77,10 @@ void TextFile<T1, T2, T3>::setData() {
 }
 
 template <typename T1, typename T2, typename T3>
-void TextFile<T1, T2, T3>::sortData() {
+void TextFile<T1, T2, T3>::sortData(int chose) {
+
 	FILE* f = std::fopen(this->fileName, "r+");
-	Element<string, int,string> left, right;
+	Element<string, int, string> left, right;
 	for (int i = 0; i < count; i++)
 	{
 		std::fseek(f, i * (sizeof(Element<T1, T2, T3>)), SEEK_SET);
@@ -81,7 +90,7 @@ void TextFile<T1, T2, T3>::sortData() {
 		{
 			std::fseek(f, j * (sizeof(Element<T1, T2, T3>)), SEEK_SET);
 			std::fread(&right, sizeof(Element<T1, T2, T3>), 1, f);
-			if (left.year > right.year)
+			if (parametr(left, right, chose))
 			{
 				std::fseek(f, j * (sizeof(Element<T1, T2, T3>)), SEEK_SET);
 				std::fwrite(&left, sizeof(Element<T1, T2, T3>), 1, f);
@@ -95,15 +104,31 @@ void TextFile<T1, T2, T3>::sortData() {
 }
 
 template <typename T1, typename T2, typename T3>
+bool TextFile<T1, T2, T3>::parametr(Element<string, int, string> left, Element<string, int, string> right, int chose)
+{
+	switch (chose)
+	{
+	case 1: return left.firstName[0] > right.firstName[0] ? true : false;
+	case 2: return left.klas[0] > right.klas[0] ? true : false;
+	case 3: return left.counture[0] > right.counture[0] ? true : false;
+	case 4: return left.year > right.year ? true : false;
+	case 5: return left.c > right.c ? true : false;
+	default: return left.firstName[0] > right.firstName[0] ? true : false;
+	}
+}
+
+template <typename T1, typename T2, typename T3>
 void TextFile<T1, T2, T3>::showData() {
-	cout << setw(40) << "\nList of available subscriber\n" << endl;
+	setlocale(LC_ALL, "Russian");
+	cout << setw(40) << "\nПолученные данные\n" << endl;
 	FILE* f;
 	Element<T1, T2, T3> object;
 	f = std::fopen(this->fileName, "rb");
-	cout << setw(15) << "Имя" << setw(15) << "Класс музыкального инструмента" << setw(15) << "Страна" << setw(15) << "Возраст" << setw(15)<<"Занятое место"<< setw(15)<< endl;
+	cout << setw(15) << "Имя" << setw(15) << "Класс музыкального инструмента" << setw(15) << "Страна" << setw(15) << "Возраст" << setw(15) << "Занятое место" << setw(15) << endl;
 	for (int i = 0; i < count; i++) {
-		std::fread(&object, sizeof(Element<T1, T2,T3>), 1, f);
-		cout  << setw(15) << object.firstName << setw(15) << object.klas << setw(15) << object.counture<< setw(15) << object.year<< setw(15)<< object.c<< setw(15)<< endl;
+		setlocale(LC_ALL, "Russian");
+		std::fread(&object, sizeof(Element<T1, T2, T3>), 1, f);
+		cout << setw(15) << object.firstName << setw(15) << object.klas << setw(15) << object.counture << setw(15) << object.year << setw(15) << object.c << setw(15) << endl;
 	}
 	cout << endl;
 	std::fclose(f);
@@ -112,11 +137,12 @@ void TextFile<T1, T2, T3>::showData() {
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-	TextFile< char,int,char>* example = new TextFile< char,int,char>();
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	TextFile< char, int, char>* example = new TextFile< char, int, char>();
 	int choice;
-
-	cout << "1 - Input; 2 - Display; 3 - Sorting by year; 4 - exit" << endl;
-	cout << "\nYour choice: ";
+	cout << "1 - Добавить; 2 - Просмотр; 3 - Сортировка по году рождения;4-Сортировка по имени; 5 - выход" << endl;
+	cout << "\nВыберите: ";
 	cin >> choice;
 
 	while (choice >= 1 & choice <= 3) {
@@ -131,12 +157,15 @@ int main()
 			break;
 		}
 		case 3:
-			example->sortData();
-			cout << setw(40) << "The result of sorting" << endl;
+			int chose;
+			cout << "Выберите поле для сортировки 1-5" << endl;
+			cin >> chose;
+			example->sortData(chose);
+			cout << setw(40) << "Результат сортировки" << endl;
 			example->showData();
 			break;
 		}
-		cout << "Your choice: ";
+		cout << "Выберите: ";
 		cin >> choice;
 	}
 
